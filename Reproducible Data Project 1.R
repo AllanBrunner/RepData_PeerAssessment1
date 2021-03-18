@@ -1,32 +1,43 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+########1#########2#########3#########4#########5#########6#########7###########
+#                                                                              #
+#  Reproducible Data Project 1 (03/017/2021)                                   #
+#                                                                              #
+#  This project analyzes data from a personal activity monitoring device.      #
+#  The data consist of two months of data (October and November 2012)          #
+#  for one individual and include the number of steps taken in 5 minute        #
+#  intervals each day.  The project is for a Reproducible Research course.     #
+#                                                                              #
+#########1#########2#########3#########4#########5#########6#########7##########
 
-
-#  Preliminaries
-
--  read in the activity data
--  create a dataset with no NAs
--  define function multiplot
-
-```{r}
-   
    library(dplyr)
    library(ggplot2)
 
+#  read in the activity data
+#  create a dataset with no NAs
+
    act_dat <- read.csv("data/activity.csv") 
+
+   head(act_dat, n=30)
+   tail(act_dat, n=30)
+   
+   table(act_dat$date)
+   
+   summary(act_dat$steps)
    
    act_noNA <- na.omit(act_dat)
    
-```
-
-
-
-```{r}
-
+   
+#  defince multiplot function
+#
+#  ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+#  - cols:   Number of columns in layout
+#  - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+#  If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+#  then plot 1 will go in the upper left, 2 will go in the upper right, and
+#  3 will go all the way across the bottom.
+   
+   
    multiplot <- function(...,
                          plotlist = NULL,
                          file,
@@ -72,18 +83,14 @@ output:
       }
    }
    
-```
-
-
-
-#  Q#1: What is mean total number of steps taken per day?
-
--  calculate the total number of steps taken per day
--  create a histogram of total steps   
--  compute the mean and median   
-
-```{r}
-
+   
+   
+   
+#  Step 1      
+#  calculate the total number of steps taken per day
+#  create a histogram of total steps   
+#  compute the mean and median   
+     
    steps_tot <- aggregate(x = act_noNA$steps,    
                           by = list(act_noNA$date), 
                           FUN = sum)              
@@ -99,18 +106,12 @@ output:
    mean(steps_tot$x)
    median(steps_tot$x)
 
-```
-
-
-
-#  Q#2: What is the average daily activity pattern?
-
--  caclulate the average number of steps taken for each 5-minute interval
--  create a time series plot of averages
--  calcluate the maximum number of steps taken during a 5-minute intervale 
-
-```{r}
-
+      
+#  Step 2
+#  caclulate the average number of steps taken for each 5-minute interval
+#  create a time series plot of averages
+#  calcluate the maximum number of steps taken during a 5-minute intervale 
+     
    steps_avg <- aggregate(x = act_noNA$steps,    
                           by = list(act_noNA$interval), 
                           FUN = mean)              
@@ -123,17 +124,14 @@ output:
    
    max(steps_avg$x)
    
-```
-
-
-
-#  Imputation for NAs
--  caclulate the number of missing values for steps
--  copy steps variable to imp variable   
--  impute the NAs with the median for stpes   
-
-```{r}
-
+   
+#  Step 3
+#  caclulate the number of missing values for steps
+#  copy steps variable to imp variable   
+#  impute the NAs with the median for stpes   
+#  create histogram of total steps with imputed data
+#  compute the mean and median   
+        
    NAlist <- is.na(act_dat$steps)   
 
    table(NAlist)   
@@ -142,16 +140,6 @@ output:
    
    act_dat$imp[is.na(act_dat$imp)] = median(act_noNA$steps)
    
-```
-
-
-
-#  Q#3 How does the distribution of total number of steps 
-#  taken in a day with imputed NAs compare with the 
-#  distribution in Q#1?
-
-```{r}
-
    steps_imp <- aggregate(x = act_dat$imp,    
                           by = list(act_dat$date), 
                           FUN = sum)              
@@ -167,20 +155,14 @@ output:
    mean(steps_imp$x)
    median(steps_imp$x)
    
-```
-
-
-
-#  Q#4: Are there differences in activity patterns between weekdays and weekends?
-
--  create variable "day" that contains the day of the week for each date
--  create variable "cat" that has value "weekend" if day of the week is a weekend,
--  and has value of "weekday" otherwise.   
--  caclulate the average number of steps taken for each 5-minute interval for
--  weekends and for weekdays   
--  create a time series plot of averages for weekends versus weekdays
-
-```{r}
+   
+#  Step 4
+#  create variable "day" that contains the day of the week for each date
+#  create variable "cat" that has value "weekend" if day of the week is a weekend,
+#  and has value of "weekday" otherwise.   
+#  caclulate the average number of steps taken for each 5-minute interval for
+#  weekends and for weekdays   
+#  create a time series plot of averages for weekends versus weekdays
 
    act_dat$day <- weekdays(as.Date(act_dat$date))
    
@@ -213,5 +195,3 @@ output:
       ylim(0, ylim)
    
    multiplot(p1, p2, cols=1)
-
-```

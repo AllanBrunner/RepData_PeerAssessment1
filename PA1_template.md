@@ -12,21 +12,40 @@ output:
 -  create a dataset with no NAs
 -  define function multiplot
 
-```{r}
-   
+
+```r
    library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
    library(ggplot2)
 
    act_dat <- read.csv("data/activity.csv") 
    
    act_noNA <- na.omit(act_dat)
-   
 ```
 
 
 
-```{r}
 
+```r
    multiplot <- function(...,
                          plotlist = NULL,
                          file,
@@ -71,7 +90,6 @@ output:
          }
       }
    }
-   
 ```
 
 
@@ -82,8 +100,8 @@ output:
 -  create a histogram of total steps   
 -  compute the mean and median   
 
-```{r}
 
+```r
    steps_tot <- aggregate(x = act_noNA$steps,    
                           by = list(act_noNA$date), 
                           FUN = sum)              
@@ -95,10 +113,24 @@ output:
          y="Frequency",
          title = "Distribution of Total Steps Taken Per Day"
       ) 
-   
-   mean(steps_tot$x)
-   median(steps_tot$x)
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
+   mean(steps_tot$x)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+   median(steps_tot$x)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -109,8 +141,8 @@ output:
 -  create a time series plot of averages
 -  calcluate the maximum number of steps taken during a 5-minute intervale 
 
-```{r}
 
+```r
    steps_avg <- aggregate(x = act_noNA$steps,    
                           by = list(act_noNA$interval), 
                           FUN = mean)              
@@ -120,9 +152,16 @@ output:
       geom_line() + 
       labs(x="Time Interval", y="Average Number of Steps",
            title="Average Number of Steps by Time Interval")
-   
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
    max(steps_avg$x)
-   
+```
+
+```
+## [1] 206.1698
 ```
 
 
@@ -132,16 +171,23 @@ output:
 -  copy steps variable to imp variable   
 -  impute the NAs with the median for stpes   
 
-```{r}
 
+```r
    NAlist <- is.na(act_dat$steps)   
 
    table(NAlist)   
+```
 
+```
+## NAlist
+## FALSE  TRUE 
+## 15264  2304
+```
+
+```r
    act_dat$imp <- act_dat$steps
    
    act_dat$imp[is.na(act_dat$imp)] = median(act_noNA$steps)
-   
 ```
 
 
@@ -150,8 +196,8 @@ output:
 #  taken in a day with imputed NAs compare with the 
 #  distribution in Q#1?
 
-```{r}
 
+```r
    steps_imp <- aggregate(x = act_dat$imp,    
                           by = list(act_dat$date), 
                           FUN = sum)              
@@ -163,10 +209,24 @@ output:
          y="Frequency",
          title = "Distribution of Total Steps Taken Per Day (Imputed Data)"
       ) 
-   
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+```r
    mean(steps_imp$x)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
    median(steps_imp$x)
-   
+```
+
+```
+## [1] 10395
 ```
 
 
@@ -180,8 +240,8 @@ output:
 -  weekends and for weekdays   
 -  create a time series plot of averages for weekends versus weekdays
 
-```{r}
 
+```r
    act_dat$day <- weekdays(as.Date(act_dat$date))
    
    act_dat$cat <- ifelse(grepl("Sunday|Saturday", act_dat$day), "weekend", "weekday")   
@@ -213,5 +273,6 @@ output:
       ylim(0, ylim)
    
    multiplot(p1, p2, cols=1)
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
